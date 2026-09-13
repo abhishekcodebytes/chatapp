@@ -1,0 +1,25 @@
+FROM node:20 AS frontend
+
+WORKDIR /app/frontend
+
+COPY frontend/package*.json ./
+RUN npm install
+
+COPY frontend/ .
+RUN npm run build
+
+
+FROM node:20
+
+WORKDIR /app/backend
+
+COPY backend/package*.json ./
+RUN npm install
+
+COPY backend/ .
+
+COPY --from=frontend /app/frontend/dist ./public
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
