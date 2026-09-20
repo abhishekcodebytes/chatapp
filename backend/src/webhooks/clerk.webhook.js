@@ -1,5 +1,5 @@
 import express from "express";
-import user from "../models/user.model.js";
+import User from "../models/user.model.js";
 import { verifyWebhook } from "@clerk/backend/webhooks";
 
 const router = express.Router()
@@ -33,13 +33,13 @@ if (evt.type === "user.created" || evt.type === "user.updated") {
         u.email_addresses?.[0]?.email_address;
 
         const fullName =
-        [u.first_name,u.last_name].filter(Boolean).json("")||
+        [u.first_name,u.last_name].filter(Boolean).join("")||
         u.username ||
         email?.split("@")[0];
 
         await User.findOneAndUpdate(
          {clerkId:u.id},
-         {clerk: u.id,email,fullName,profilePic: u.image_url } ,
+         {clerkId: u.id,email,fullName,profilePic: u.image_url } ,
          {new:true, upsert:true,setdefaultOnInset:true},
         );        
          }
@@ -48,10 +48,10 @@ if (evt.type === "user.created" || evt.type === "user.updated") {
             if(evt.data.id) await User.findOneAndDelete({clerkId:evt.data.id})
          }
 
-          res.sendStatus(200).json({received:true});
+          res.Status(200).json({received:true});
    } catch (error) {
 console.error("Error in Clerk webhook:", error);
-          res.sendStatus(400).json({message:"Webhook verification failed"});
+          res.Status(400).json({message:"Webhook verification failed"});
 
    }
 

@@ -35,6 +35,8 @@ app.get("/health",(req,res)=>{
     res.status(200).json({ok:true});
 });
 
+app.use("/")
+
 // // if public directroy exist serve the static file
 // this is for production build
 if(fs.existsSync(publicDir)){
