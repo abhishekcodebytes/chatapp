@@ -33,26 +33,24 @@ if (evt.type === "user.created" || evt.type === "user.updated") {
         u.email_addresses?.[0]?.email_address;
 
         const fullName =
-        [u.first_name,u.last_name].filter(Boolean).join("")||
-        u.username ||
+[u.first_name, u.last_name].filter(Boolean).join(" ") ||        u.username ||
         email?.split("@")[0];
 
         await User.findOneAndUpdate(
          {clerkId:u.id},
-         {clerkId: u.id,email,fullName,profilePic: u.image_url } ,
-         {new:true, upsert:true,setdefaultOnInset:true},
-        );        
+{ clerkId: u.id, email, fullName, profilePic: u.image_url },
+
+{ new: true, upsert: true, setDefaultsOnInsert: true },        );        
          }
 
          if(evt.type == "user.deleted"){
             if(evt.data.id) await User.findOneAndDelete({clerkId:evt.data.id})
          }
 
-          res.Status(200).json({received:true});
+          res.status(200).json({ received: true });
    } catch (error) {
 console.error("Error in Clerk webhook:", error);
-          res.Status(400).json({message:"Webhook verification failed"});
-
+res.status(400).json({ message: "Webhook verification failed" });
    }
 
 });
