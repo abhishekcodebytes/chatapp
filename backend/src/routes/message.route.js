@@ -14,7 +14,7 @@ router.use(protectroute);
 router.get("/users", getUsersForSidebar);
 router.get("/conversations",  getConversationsForSidebar);
 router.get("/Id",  getMessages);
-router.post("/send/:id", upload.single("media"), getMessages);
-
+router.post("/send/:id", upload.single("media"), sendMessages);
+// todo:show this in the frontend
 
 export default router;
