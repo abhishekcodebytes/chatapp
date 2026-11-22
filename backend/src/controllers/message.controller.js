@@ -93,13 +93,13 @@ export async function sendMessage(req, res) {
         let imageUrl;
         let videoUrl;
 
-        if(req.file){
-            if(!hasImagekitConfig()){
-                return res.status(500).json({message:"Media upload is not configured"});
+        if (req.file) {
+            if (!hasImagekitConfig()) {
+                return res.status(500).json({ message: "Media upload is not configured" });
             }
 
-            const url =await uploadChatMedia(req.file);
-            if (req.file.minetype.startsWith("video/")) videoUrl =url;
+            const url = await uploadChatMedia(req.file);
+            if (req.file.minetype.startsWith("video/")) videoUrl = url;
             else imageUrl = url;
         }
 
@@ -107,17 +107,21 @@ export async function sendMessage(req, res) {
             senderId,
             receiverId,
             text,
-            image:imageUrl,
-            video:videoUrl,
+            image: imageUrl,
+            video: videoUrl,
         })
 
         await newMessage.save()
 
-        // todo: realtime with socketio
+        const receiverSocketId = getReceiverSocketId(receiverId)
+        only send the message in real time if user is online
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage)
+        }
 
         res.status(201).json(newMessage)
     } catch (error) {
         console.error("Error in sendmessage:", error.message);
-     res.status(500).json({message:"Internal server error"});
+        res.status(500).json({ message: "Internal server error" });
     }
 }
